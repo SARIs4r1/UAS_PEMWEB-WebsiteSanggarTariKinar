@@ -1,8 +1,5 @@
 <?php
-/**
- * Koneksi database (PDO + MySQL).
- * Ubah nilai di bawah ini sesuai kredensial database kamu saat deploy/di local.
- */
+
 $DB_HOST = 'localhost';
 $DB_NAME = 'db_kostum_tari';
 $DB_USER = 'root';
