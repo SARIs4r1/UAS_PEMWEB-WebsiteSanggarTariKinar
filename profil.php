@@ -30,7 +30,7 @@ require __DIR__ . '/includes/header.php';
     <p>
         Alamat: Pontianak, Kalimantan Barat<br>
         WhatsApp: 08xx-xxxx-xxxx<br>
-        Email: info@sanggartarikhatulistiwa.test
+        Email: info@sanggartarikinar.test
     </p>
 </section>
 
