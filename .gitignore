@@ -1,0 +1,13 @@
+# Dependencies / local config
+vendor/
+.env
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Uploaded files (jangan commit foto user)
+uploads/*
+!uploads/.gitkeep
