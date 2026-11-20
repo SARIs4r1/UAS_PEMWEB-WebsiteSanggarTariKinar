@@ -13,7 +13,7 @@ require __DIR__ . '/includes/header.php';
 
 <section class="hero">
     <h1>Sanggar Tari Kinar</h1>
-    <p>Penyewaan kostum dan properti tari untuk pentas, festival, dan acara budaya di Kalimantan Barat.</p>
+    <p>Penyewaan kostum dan properti tari untuk pentas, festival, dan acara budaya di Sambas, Kalimantan Barat.</p>
     <a class="btn" href="katalog.php">Lihat Katalog</a>
 </section>
 
