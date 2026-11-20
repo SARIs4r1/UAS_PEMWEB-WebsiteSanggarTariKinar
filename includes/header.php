@@ -1,7 +1,4 @@
 <?php
-// Variabel yang harus di-set oleh halaman pemanggil SEBELUM include file ini:
-//   $base_url   -> '' kalau file ada di root, '../' kalau di dalam folder admin/
-//   $page_title -> judul halaman (opsional)
 $base_url = $base_url ?? '';
 $user = current_user();
 ?>
