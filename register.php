@@ -1,13 +1,12 @@
 <?php
-require_once __DIR__ . '/includes/db.php';
-require_once __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/includes/bootstrap.php';
 
-$base_url   = '';
-$page_title = 'Daftar';
+$base_url     = '';
+$page_title   = 'Daftar';
+$header_solid = true;
 
 if (is_logged_in()) {
-    header('Location: index.php');
-    exit;
+    redirect('index.php');
 }
 
 $errors = [];
@@ -15,6 +14,7 @@ $name   = '';
 $email  = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    csrf_verify();
     $name     = trim($_POST['name'] ?? '');
     $email    = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'Konfirmasi password tidak cocok.';
     }
 
-    if (empty($errors)) {
+    if (!$errors) {
         $check = $pdo->prepare('SELECT id FROM users WHERE email = :email');
         $check->execute(['email' => $email]);
         if ($check->fetch()) {
@@ -41,53 +41,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if (empty($errors)) {
-        $hash = password_hash($password, PASSWORD_DEFAULT);
+    if (!$errors) {
         $insert = $pdo->prepare(
             'INSERT INTO users (name, email, password, role) VALUES (:name, :email, :password, :role)'
         );
-        // Role pelanggan di-hardcode di sini: pendaftaran publik TIDAK BOLEH bisa membuat akun admin.
         $insert->execute([
             'name'     => $name,
             'email'    => $email,
-            'password' => $hash,
+            'password' => password_hash($password, PASSWORD_DEFAULT),
             'role'     => 'pelanggan',
         ]);
-
-        $_SESSION['flash_success'] = 'Pendaftaran berhasil. Silakan masuk.';
-        header('Location: login.php');
-        exit;
+        flash('success', 'Pendaftaran berhasil. Silakan masuk.');
+        redirect('login.php');
     }
 }
 
 require __DIR__ . '/includes/header.php';
 ?>
-
-<h1>Daftar Akun Pelanggan</h1>
-
-<?php foreach ($errors as $err): ?>
-    <div class="alert alert-error"><?= htmlspecialchars($err) ?></div>
-<?php endforeach; ?>
-
-<form class="form-box" method="post" action="register.php">
-    <div class="form-group">
-        <label for="name">Nama Lengkap</label>
-        <input type="text" id="name" name="name" value="<?= htmlspecialchars($name) ?>" required>
+<section class="auth">
+    <div class="auth-side">
+        <h1 class="auth-title">Buat akun pelanggan</h1>
+        <p>Akun dipakai untuk mengajukan sewa kostum dan properti tari. Mengenal sanggar dan melihat galeri tidak perlu akun.</p>
+        <div class="rebung" aria-hidden="true"></div>
     </div>
-    <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" value="<?= htmlspecialchars($email) ?>" required>
+    <div class="auth-form">
+        <h2 class="h3">Daftar</h2>
+        <?php foreach ($errors as $err): ?><div class="alert alert--error" role="alert"><?= e($err) ?></div><?php endforeach; ?>
+        <form method="post" action="register.php" class="form">
+            <?= csrf_field() ?>
+            <div class="field">
+                <label for="name">Nama lengkap</label>
+                <input type="text" id="name" name="name" value="<?= e($name) ?>" autocomplete="name" required>
+            </div>
+            <div class="field">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" value="<?= e($email) ?>" autocomplete="email" required>
+            </div>
+            <div class="field">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" minlength="6" autocomplete="new-password" required>
+            </div>
+            <div class="field">
+                <label for="password_confirm">Ulangi password</label>
+                <input type="password" id="password_confirm" name="password_confirm" minlength="6" autocomplete="new-password" required>
+            </div>
+            <button type="submit" class="btn btn--green btn--block">Buat akun</button>
+            <p class="meta">Sudah punya akun? <a href="login.php">Masuk di sini</a></p>
+        </form>
     </div>
-    <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" minlength="6" required>
-    </div>
-    <div class="form-group">
-        <label for="password_confirm">Konfirmasi Password</label>
-        <input type="password" id="password_confirm" name="password_confirm" minlength="6" required>
-    </div>
-    <button type="submit" class="btn">Daftar</button>
-    <p class="muted">Sudah punya akun? <a href="login.php">Masuk di sini</a>.</p>
-</form>
-
-<?php require __DIR__ . '/includes/footer.php'; ?>
+</section>
+<?php require __DIR__. '/includes/footer.php'; ?>

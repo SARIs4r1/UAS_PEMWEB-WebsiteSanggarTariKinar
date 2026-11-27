@@ -1,9 +1,9 @@
 <?php
-require_once __DIR__ . '/includes/db.php';
-require_once __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/includes/bootstrap.php';
 
-$base_url   = '';
-$page_title = 'Penyewaan Saya';
+$base_url     = '';
+$page_title   = 'Sewa saya';
+$header_solid = true;
 
 require_login();
 $user = current_user();
@@ -20,36 +20,30 @@ $requests = $stmt->fetchAll();
 
 require __DIR__ . '/includes/header.php';
 ?>
-
-<h1>Penyewaan Saya</h1>
-
-<?php if (empty($requests)): ?>
-    <p class="muted">Kamu belum mengajukan penyewaan apapun. <a href="katalog.php">Lihat katalog</a>.</p>
-<?php else: ?>
-    <table>
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th>Kategori</th>
-                <th>Tanggal Mulai</th>
-                <th>Tanggal Selesai</th>
-                <th>Jumlah</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-        <?php foreach ($requests as $r): ?>
-            <tr>
-                <td><?= htmlspecialchars($r['item_nama']) ?></td>
-                <td><?= htmlspecialchars($r['kategori']) ?></td>
-                <td><?= htmlspecialchars($r['tanggal_mulai']) ?></td>
-                <td><?= htmlspecialchars($r['tanggal_selesai']) ?></td>
-                <td><?= (int)$r['jumlah'] ?></td>
-                <td class="status-<?= htmlspecialchars($r['status']) ?>"><?= htmlspecialchars(ucfirst($r['status'])) ?></td>
-            </tr>
-        <?php endforeach; ?>
-        </tbody>
-    </table>
-<?php endif; ?>
-
+<section class="section section--top">
+    <div class="container">
+        <h1 class="h2">Sewa saya</h1>
+        <?php if (!$requests): ?>
+            <p class="empty">Kamu belum mengajukan sewa. <a href="katalog.php">Lihat katalog</a>.</p>
+        <?php else: ?>
+            <div class="table-wrap">
+                <table class="table">
+                    <thead>
+                        <tr><th>Item</th><th>Tanggal</th><th>Jumlah</th><th>Status</th></tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach ($requests as $r): ?>
+                        <tr>
+                            <td><?= e($r['item_nama']) ?><br><span class="meta"><?= e($r['kategori']) ?></span></td>
+                            <td><?= e(tanggal_id($r['tanggal_mulai'])) ?> sampai <?= e(tanggal_id($r['tanggal_selesai'])) ?></td>
+                            <td><?= (int)$r['jumlah'] ?></td>
+                            <td><span class="status status--<?= e($r['status']) ?>"><?= e(ucfirst($r['status'])) ?></span></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
+    </div>
+</section>
 <?php require __DIR__ . '/includes/footer.php'; ?>

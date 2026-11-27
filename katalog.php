@@ -1,46 +1,49 @@
 <?php
-require_once __DIR__ . '/includes/db.php';
-require_once __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/includes/bootstrap.php';
 
 $base_url   = '';
-$page_title = 'Katalog';
+$page_title = 'Sewa Kostum';
+$active     = 'sewa';
 
-$kategori = $_GET['kategori'] ?? '';
+$kategori         = $_GET['kategori'] ?? '';
 $allowed_kategori = ['Kostum Tari', 'Properti Tari'];
 
 if (in_array($kategori, $allowed_kategori, true)) {
     $stmt = $pdo->prepare('SELECT * FROM items WHERE kategori = :kategori ORDER BY nama ASC');
     $stmt->execute(['kategori' => $kategori]);
 } else {
+    $kategori = '';
     $stmt = $pdo->query('SELECT * FROM items ORDER BY nama ASC');
 }
 $items = $stmt->fetchAll();
 
 require __DIR__ . '/includes/header.php';
+page_hero('Sewa kostum dan properti tari', 'Layanan pelengkap sanggar untuk sekolah, pelajar, dan panitia acara.');
 ?>
+<section class="section">
+    <div class="container">
+        <div class="filters" role="group" aria-label="Filter kategori">
+            <a class="chip<?= $kategori === '' ? ' is-active' : '' ?>" href="katalog.php">Semua</a>
+            <a class="chip<?= $kategori === 'Kostum Tari' ? ' is-active' : '' ?>" href="katalog.php?kategori=Kostum+Tari">Kostum</a>
+            <a class="chip<?= $kategori === 'Properti Tari' ? ' is-active' : '' ?>" href="katalog.php?kategori=Properti+Tari">Properti</a>
+        </div>
 
-<h1>Katalog Kostum &amp; Properti Tari</h1>
-
-<p class="action-links">
-    <a href="katalog.php" class="<?= $kategori === '' ? 'btn btn-small' : '' ?>">Semua</a>
-    <a href="katalog.php?kategori=Kostum+Tari" class="<?= $kategori === 'Kostum Tari' ? 'btn btn-small' : '' ?>">Kostum Tari</a>
-    <a href="katalog.php?kategori=Properti+Tari" class="<?= $kategori === 'Properti Tari' ? 'btn btn-small' : '' ?>">Properti Tari</a>
-</p>
-
-<?php if (empty($items)): ?>
-    <p class="muted">Tidak ada item untuk kategori ini.</p>
-<?php else: ?>
-    <div class="grid">
-        <?php foreach ($items as $item): ?>
-            <div class="card">
-                <span class="badge"><?= htmlspecialchars($item['kategori']) ?></span>
-                <h3><?= htmlspecialchars($item['nama']) ?></h3>
-                <p class="muted">Stok: <?= (int)$item['stok'] ?></p>
-                <p>Rp <?= number_format((float)$item['harga_sewa_per_hari'], 0, ',', '.') ?> / hari</p>
-                <a href="katalog_detail.php?id=<?= (int)$item['id'] ?>">Lihat Detail &rarr;</a>
+        <?php if (!$items): ?>
+            <p class="empty">Belum ada item untuk kategori ini.</p>
+        <?php else: ?>
+            <div class="grid grid--4">
+                <?php foreach ($items as $it): ?>
+                    <a class="tile" href="katalog_detail.php?id=<?= (int)$it['id'] ?>">
+                        <div class="tile-media"><?= photo($it['foto'], $it['nama'], 'ratio-43') ?></div>
+                        <div class="tile-body">
+                            <h3><?= e($it['nama']) ?></h3>
+                            <p class="meta"><?= e($it['kategori']) ?>, stok <?= (int)$it['stok'] ?></p>
+                            <p class="price"><?= e(rupiah($it['harga_sewa_per_hari'])) ?> <small>/ hari</small></p>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
             </div>
-        <?php endforeach; ?>
+        <?php endif; ?>
     </div>
-<?php endif; ?>
-
+</section>
 <?php require __DIR__ . '/includes/footer.php'; ?>
