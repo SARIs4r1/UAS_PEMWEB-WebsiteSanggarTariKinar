@@ -1,64 +1,70 @@
-# Website Company Profile dan Katalog Penyewaan Kostum serta Properti Tari
+# Website Company Profile Sanggar Tari Kinar
 
-UAS Pemrograman Web — Sari (D1041241061)
+UAS Pemrograman Web: Sari (D1041241061)
 
-## Deskripsi
+Sanggar Tari Kinar adalah sanggar seni tari yang berpusat di Kecamatan Tekarang, Kabupaten Sambas, Kalimantan Barat, dengan pusat latihan di SMAN 1 Tekarang. Website ini adalah **company profile** sanggar. Penyewaan kostum dan properti tari hanya layanan pelengkap.
 
-Website company profile dan katalog penyewaan kostum serta properti tari, dengan fitur:
+## Fitur
 
-- Company profile (beranda & profil usaha)
-- Katalog kostum & properti tari (publik, bisa difilter per kategori)
-- Autentikasi (register & login) dengan hash password
-- CRUD katalog (Create, Read, Update, Delete) khusus role **admin**
-- Role-based access control: **admin** (kelola katalog & permintaan sewa) vs **pelanggan** (lihat katalog & ajukan sewa)
-- Pengelolaan permintaan sewa (pelanggan mengajukan, admin menyetujui/menolak)
+- Halaman publik: beranda, profil (visi, misi, kontak), tari, kegiatan, galeri foto (dengan lightbox), katalog sewa kostum
+- Autentikasi: register, login, logout (password di-hash, CSRF token, session aman)
+- Role dan access control: **admin** (kelola seluruh isi situs) dan **pelanggan** (ajukan dan pantau sewa)
+- CRUD admin: kegiatan, galeri foto, tari, katalog sewa (semua dengan upload foto), pengaturan teks situs, persetujuan permintaan sewa
 
-## Tech Stack
+## Tech stack
 
-- PHP native (tanpa framework)
-- MySQL (PDO)
-- HTML/CSS native
+PHP native, MySQL (PDO), HTML, CSS, dan JavaScript tanpa framework.
 
-## Struktur Folder
+## Struktur folder
 
 ```
-├── admin/              -> halaman khusus role admin (CRUD katalog, kelola sewa)
-├── assets/css/         -> stylesheet
-├── database/schema.sql -> skema database + data awal
-├── includes/           -> koneksi DB, auth/access control, header & footer
-├── index.php           -> beranda
-├── profil.php          -> profil usaha
-├── katalog.php         -> katalog publik
-├── katalog_detail.php  -> detail item
-├── register.php / login.php / logout.php
-├── sewa_ajukan.php     -> form pengajuan sewa (pelanggan)
-└── sewa_saya.php       -> riwayat sewa pelanggan
+admin/            halaman khusus role admin
+assets/css, js/   gaya dan interaksi
+database/         db_sanggar.sql (skema + data awal)
+includes/         db, auth (role), helpers (CSRF, upload, setting), layout
+uploads/          foto yang diunggah admin (tidak di-commit)
+*.php             halaman publik dan halaman pelanggan
 ```
 
-## Cara Menjalankan (Local)
+## Menjalankan di lokal
 
-1. Import `database/schema.sql` ke MySQL (lewat phpMyAdmin atau `mysql -u root -p < database/schema.sql`).
-2. Sesuaikan kredensial database di `includes/db.php` kalau perlu.
-3. Jalankan dengan PHP built-in server dari root project:
-   ```
-   php -S localhost:8000
-   ```
-4. Buka `http://localhost:8000` di browser.
+1. Import `database/db_sanggar.sql` (phpMyAdmin atau `mysql -u root -p < database/db_sanggar.sql`).
+2. Sesuaikan kredensial di `includes/db.php` bila perlu.
+3. Dari folder project: `php -S localhost:8000`
+4. Buka `http://localhost:8000`
 
-**Akun demo:**
-- Admin: `admin@sanggar.test` / `admin123`
-- Pelanggan: daftar sendiri lewat halaman Register.
+Akun admin: `admin@sanggar.test` / `admin123` (ganti setelah deploy). Pelanggan mendaftar lewat halaman Daftar.
+
+## Mengisi foto dan konten
+
+Masuk sebagai admin, lalu di Panel Admin:
+
+- **Pengaturan situs**: foto latar beranda, foto bagian tentang, teks profil, visi, misi, jadwal latihan, WhatsApp, email, Instagram
+- **Galeri foto**: unggah banyak foto sekaligus
+- **Kegiatan, Tari, Katalog sewa**: tambah, ubah, hapus beserta fotonya
+
+Data tari dan katalog bawaan hanyalah contoh, silakan ubah atau hapus.
+
+## Deploy
+
+1. Buat database di hosting, import `database/db_sanggar.sql` (hapus dua baris `CREATE DATABASE` dan `USE` bila hosting sudah menyediakan database).
+2. Isi kredensial hosting di `includes/db.php`.
+3. Upload semua file lewat FTP/File Manager dan pastikan folder `uploads/` bisa ditulis (izin 755 atau 775).
 
 ## Progres
 
-### Tahap 1 — 20 November 2026
-- Analisis kebutuhan sistem: menentukan fitur utama (company profile, katalog kostum & properti tari, autentikasi, CRUD data katalog, role admin & pelanggan)
-- Perancangan basis data (ERD) untuk entitas `users`, `items`, dan `rental_requests`
-- Perancangan wireframe untuk halaman beranda/profil usaha, katalog, detail item, dan dashboard admin
-- Setup repository Git, struktur folder project, dan scaffold awal (auth, CRUD katalog, role-based access control)
+### Tahap 1 (20 November 2026)
+- Analisis kebutuhan sistem: fitur utama (company profile, autentikasi, CRUD, role admin dan pelanggan)
+- Perancangan basis data (ERD) dan wireframe halaman utama
+- Setup repository Git, struktur folder, dan scaffold awal (auth, CRUD, role-based access control)
 
-## Catatan Pengembangan Lanjutan
+## Catatan pengembangan lanjutan
 
-- Belum ada payment gateway (di luar scope UAS, bisa jadi pengembangan KP lanjutan).
-- Upload foto item belum diimplementasikan (kolom `foto` sudah disiapkan di skema).
-- `katalog_delete.php` memakai GET + konfirmasi JS untuk kesederhanaan; untuk produksi sebaiknya diubah ke POST.
+- Belum ada payment gateway untuk sewa kostum (bisa jadi pengembangan KP).
+- Ketersediaan stok per tanggal belum dihitung; saat ini stok hanya batas jumlah pengajuan.
+
+### Tahap 2 (27 November 2026)
+- Pembaruan skema database `db_sanggar.sql` untuk tabel `settings`, `tari`, `kegiatan`, dan `galeri`
+- Penambahan fitur admin untuk mengelola daftar tari, kegiatan sanggar, galeri foto, dan pengaturan profil situs
+- Perombakan tampilan beranda dan halaman publik agar fokus pada company profile Sanggar Tari Kinar (Tekarang, Sambas)
+- Penambahan proteksi CSRF dan fitur unggah foto pada formulir
