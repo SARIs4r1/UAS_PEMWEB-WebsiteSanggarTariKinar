@@ -17,21 +17,32 @@ PHP native, MySQL (PDO), HTML, CSS, dan JavaScript tanpa framework.
 
 ## Struktur folder
 
-```
-admin/            halaman khusus role admin
-assets/css, js/   gaya dan interaksi
-database/         db_sanggar.sql (skema + data awal)
-includes/         db, auth (role), helpers (CSRF, upload, setting), layout
-uploads/          foto yang diunggah admin (tidak di-commit)
-*.php             halaman publik dan halaman pelanggan
+```text
+├── admin/              -> halaman khusus role admin (dashboard, kegiatan, galeri, tari, katalog, sewa, pengaturan)
+├── assets/
+│   ├── css/            -> kinar.css (stylesheet utama)
+│   └── js/             -> main.js (interaksi navbar, toast, lightbox galeri)
+├── database/           -> db_sanggar.sql (skema database + data awal)
+├── includes/           -> bootstrap, db, auth (role), helpers (CSRF, upload, setting), header, footer, admin_header, admin_footer
+├── uploads/            -> foto yang diunggah admin (tidak di-commit)
+├── index.php           -> beranda company profile
+├── profil.php          -> profil sanggar (visi, misi, pusat latihan & kontak)
+├── tari.php            -> daftar tarian yang dibawakan sanggar
+├── kegiatan.php        -> agenda & dokumentasi kegiatan sanggar
+├── galeri.php          -> galeri foto sanggar
+├── katalog.php         -> katalog sewa kostum & properti tari (layanan pelengkap)
+├── katalog_detail.php  -> detail item sewa
+├── register.php / login.php / logout.php
+├── sewa_ajukan.php     -> form pengajuan sewa (pelanggan)
+└── sewa_saya.php       -> riwayat & status sewa pelanggan
 ```
 
 ## Menjalankan di lokal
 
 1. Import `database/db_sanggar.sql` (phpMyAdmin atau `mysql -u root -p < database/db_sanggar.sql`).
 2. Sesuaikan kredensial di `includes/db.php` bila perlu.
-3. Dari folder project: `php -S localhost:8000`
-4. Buka `http://localhost:8000`
+3. Dari folder project: `php -S localhost:8000` (atau buka `http://localhost/UAS_PEMWEB` lewat Laragon).
+4. Buka `http://localhost:8000` di browser.
 
 Akun admin: `admin@sanggar.test` / `admin123` (ganti setelah deploy). Pelanggan mendaftar lewat halaman Daftar.
 
@@ -58,13 +69,13 @@ Data tari dan katalog bawaan hanyalah contoh, silakan ubah atau hapus.
 - Perancangan basis data (ERD) dan wireframe halaman utama
 - Setup repository Git, struktur folder, dan scaffold awal (auth, CRUD, role-based access control)
 
+### Tahap 2 (27 November 2026)
+- Pembaruan skema database `db_sanggar.sql` dengan penambahan tabel `settings`, `tari`, `kegiatan`, dan `galeri`
+- Penambahan fitur CRUD admin untuk mengelola tarian, kegiatan sanggar, galeri foto, serta pengaturan profil situs
+- Perombakan tampilan beranda dan halaman publik agar berfokus pada company profile Sanggar Tari Kinar (Tekarang, Sambas)
+- Penambahan proteksi CSRF dan fitur unggah foto pada formulir
+
 ## Catatan pengembangan lanjutan
 
 - Belum ada payment gateway untuk sewa kostum (bisa jadi pengembangan KP).
 - Ketersediaan stok per tanggal belum dihitung; saat ini stok hanya batas jumlah pengajuan.
-
-### Tahap 2 (27 November 2026)
-- Pembaruan skema database `db_sanggar.sql` untuk tabel `settings`, `tari`, `kegiatan`, dan `galeri`
-- Penambahan fitur admin untuk mengelola daftar tari, kegiatan sanggar, galeri foto, dan pengaturan profil situs
-- Perombakan tampilan beranda dan halaman publik agar fokus pada company profile Sanggar Tari Kinar (Tekarang, Sambas)
-- Penambahan proteksi CSRF dan fitur unggah foto pada formulir
