@@ -1,20 +1,22 @@
 <?php
 /**
- * Helper autentikasi & access control berbasis role (session-based).
- * File ini WAJIB di-include di setiap halaman SEBELUM ada output apapun,
- * karena session_start() dan header('Location: ...') butuh itu.
+ * Autentikasi & access control berbasis role (session).
+ * Wajib di-include sebelum ada output apa pun (session_start & header() butuh itu).
  */
 
 if (session_status() === PHP_SESSION_NONE) {
+    session_set_cookie_params([
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ]);
     session_start();
 }
 
 /** Simpan data user ke session setelah login berhasil. */
 function login_user(array $user): void
 {
-    // Cegah session fixation: regenerasi id session setiap kali login.
-    session_regenerate_id(true);
-    $_SESSION['user_id']   = $user['id'];
+    session_regenerate_id(true); // cegah session fixation
+    $_SESSION['user_id']   = (int)$user['id'];
     $_SESSION['user_name'] = $user['name'];
     $_SESSION['user_role'] = $user['role'];
 }
@@ -24,13 +26,13 @@ function logout_user(): void
 {
     $_SESSION = [];
     if (ini_get('session.use_cookies')) {
-        $params = session_get_cookie_params();
-        setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain']);
+        $p = session_get_cookie_params();
+        setcookie(session_name(), '', time() - 42000, $p['path'], $p['domain'], $p['secure'], $p['httponly']);
     }
     session_destroy();
 }
 
-/** Ambil data user yang sedang login, atau null kalau belum login. */
+/** Data user yang sedang login, atau null. */
 function current_user(): ?array
 {
     if (!isset($_SESSION['user_id'])) {
@@ -48,29 +50,28 @@ function is_logged_in(): bool
     return isset($_SESSION['user_id']);
 }
 
-/** Wajib login. Kalau belum, redirect ke halaman login. */
-function require_login(string $redirect_to_base = ''): void
+/** Wajib login. Kalau belum, arahkan ke halaman login. */
+function require_login(string $base = ''): void
 {
     if (!is_logged_in()) {
-        header('Location: ' . $redirect_to_base . 'login.php');
+        header('Location: ' . $base . 'login.php');
         exit;
     }
 }
 
-/**
- * Wajib login DAN memiliki role tertentu (access control).
- * Contoh: require_role('admin') di awal halaman khusus admin.
- */
-function require_role(string $role, string $redirect_to_base = ''): void
+/** Wajib login DAN punya role tertentu (access control). */
+function require_role(string $role, string $base = ''): void
 {
-    require_login($redirect_to_base);
+    require_login($base);
     if ($_SESSION['user_role'] !== $role) {
         http_response_code(403);
         echo '<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8">';
-        echo '<title>Akses Ditolak</title></head><body style="font-family:sans-serif;padding:2rem;">';
-        echo '<h1>403 - Akses Ditolak</h1>';
-        echo '<p>Halaman ini khusus untuk role <strong>' . htmlspecialchars($role) . '</strong>.</p>';
-        echo '<p><a href="' . htmlspecialchars($redirect_to_base) . 'index.php">Kembali ke beranda</a></p>';
+        echo '<meta name="viewport" content="width=device-width, initial-scale=1">';
+        echo '<title>Akses ditolak</title></head>';
+        echo '<body style="font-family:system-ui,sans-serif;padding:3rem;max-width:34rem;margin:auto">';
+        echo '<h1>403 &ndash; Akses ditolak</h1>';
+        echo '<p>Halaman ini hanya untuk role <strong>' . htmlspecialchars($role) . '</strong>.</p>';
+        echo '<p><a href="' . htmlspecialchars($base) . 'index.php">Kembali ke beranda</a></p>';
         echo '</body></html>';
         exit;
     }
