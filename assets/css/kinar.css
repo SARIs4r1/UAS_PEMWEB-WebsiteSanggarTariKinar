@@ -122,7 +122,7 @@ p { margin: 0 0 1em; }
 .hero-bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(13,31,26,.55) 0%, rgba(13,31,26,.35) 35%, rgba(13,31,26,.92) 100%); }
 .hero-inner { padding-top: 9rem; padding-bottom: 3.5rem; }
 .hero-place { color: var(--gold); font-weight: 600; margin-bottom: 1.2rem; }
-.hero-title { font-size: clamp(3.4rem, 11vw, 8.8rem); line-height: .92; letter-spacing: -.015em; margin-bottom: 1.5rem; }
+.hero-title { font-size: clamp(3.4rem, 11vw, 8.8rem); line-height: 1.08; letter-spacing: -.015em; margin-bottom: 1.5rem; }
 .hero-lead { font-size: 1.25rem; max-width: 34rem; color: #e1ebe5; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 2rem; }
 .hero-facts { border-top: 1px solid rgba(240,180,41,.4); background: rgba(13,31,26,.55); backdrop-filter: blur(6px); }
@@ -171,7 +171,7 @@ p { margin: 0 0 1em; }
 .ratio-43 { aspect-ratio: 4 / 3; }
 .ratio-45 { aspect-ratio: 4 / 5; }
 .ratio-169 { aspect-ratio: 16 / 9; }
-.ph { background: var(--rebung-line), linear-gradient(135deg, var(--ink-2), var(--leaf)); background-color: var(--ink-2); min-height: 120px; }
+.ph { background: #e3e6df; border: 1px solid var(--line); min-height: 120px; }
 
 /* ---------- Grid kartu ---------- */
 .grid { display: grid; gap: 1.6rem; }

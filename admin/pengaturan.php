@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Foto hero & foto tentang (opsional)
-    foreach (['hero_foto', 'about_foto'] as $kolom) {
+    foreach (['hero_foto', 'about_foto', 'latihan_foto'] as $kolom) {
         if (!$errors && !empty($_FILES[$kolom]['name'])) {
             $up = upload_image($_FILES[$kolom]);
             if ($up['ok']) {
@@ -78,7 +78,7 @@ require __DIR__ . '/../includes/admin_header.php';
     </div>
 
     <h2 class="admin-sub">Foto utama</h2>
-    <?php foreach (['hero_foto' => 'Foto latar beranda (disarankan landscape, minimal 1600 px lebar)', 'about_foto' => 'Foto bagian tentang kami (disarankan potret)'] as $kolom => $label): ?>
+    <?php foreach (['hero_foto' => 'Foto latar beranda (disarankan landscape, minimal 1600 px lebar)', 'about_foto' => 'Foto bagian tentang kami (disarankan potret)', 'latihan_foto' => 'Foto bagian latihan (disarankan potret)'] as $kolom => $label): ?>
         <div class="field">
             <label for="<?= e($kolom) ?>"><?= e($label) ?></label>
             <?php if (!empty($s[$kolom])): ?>

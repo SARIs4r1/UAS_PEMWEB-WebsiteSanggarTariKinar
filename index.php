@@ -10,10 +10,11 @@ $kegiatan = $pdo->query('SELECT * FROM kegiatan ORDER BY tanggal DESC, id DESC L
 $galeri   = $pdo->query('SELECT * FROM galeri ORDER BY id DESC LIMIT 6')->fetchAll();
 $items    = $pdo->query('SELECT * FROM items ORDER BY created_at DESC LIMIT 3')->fetchAll();
 
-$hero_foto  = setting('hero_foto');
-$about_foto = setting('about_foto');
-$wa         = wa_link('Halo Sanggar Tari Kinar, saya ingin bertanya.');
-$maps       = 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode('SMAN 1 Tekarang, Sambas');
+$hero_foto    = setting('hero_foto');
+$about_foto   = setting('about_foto');
+$latihan_foto = setting('latihan_foto');
+$wa           = wa_link('Halo Sanggar Tari Kinar, saya ingin bertanya.');
+$maps         = 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode('SMAN 1 Tekarang, Sambas');
 
 require __DIR__ . '/includes/header.php';
 ?>
@@ -152,7 +153,13 @@ require __DIR__ . '/includes/header.php';
                 <a class="btn btn--outline" href="<?= e($maps) ?>" target="_blank" rel="noopener">Buka di Google Maps</a>
             </div>
         </div>
-        <div class="rebung-panel" aria-hidden="true"></div>
+        <?php if ($latihan_foto && is_file(__DIR__ . '/' . $latihan_foto)): ?>
+            <div class="split-media">
+                <?= photo($latihan_foto, 'Latihan di SMAN 1 Tekarang', 'ratio-45') ?>
+            </div>
+        <?php else: ?>
+            <div class="rebung-panel" aria-hidden="true"></div>
+        <?php endif; ?>
     </div>
 </section>
 
